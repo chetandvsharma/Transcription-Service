@@ -1,0 +1,43 @@
+services:
+  transcription-api:
+    container_name: transcription-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    depends_on:
+      transcription-db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - transcription-network
+
+  transcription-db:
+    container_name: transcription-mongodb
+    image: mongo:7.0
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: transcription-db
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 3s
+      timeout: 3s
+      retries: 15
+      start_period: 10s
+    networks:
+      - transcription-network
+
+volumes:
+  mongo-data:
+
+networks:
+  transcription-network:
+    driver: bridge
