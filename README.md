@@ -1,8 +1,25 @@
 # Transcription Service API
 
-A production-ready Node.js + TypeScript + MongoDB backend, fully containerized with Docker.
+A production-ready Node.js + TypeScript + MongoDB backend following a clean MVC architecture, fully containerized using Docker. The application separates app logic (app.ts) from bootstrap logic (server.ts) for better scalability and maintainability.
 
-**Works on Windows, Mac, and Linux — no Node.js or MongoDB installation required!**
+## Code Structure
+
+src/
+├── controllers/ → Handle incoming requests & call services
+├── models/ → Mongoose schemas and data models
+├── services/ → Business logic (Azure: mock + real SDK services)
+├── config/ → Database config
+├── routes/
+│ ├── index.routes.ts → Main router exporting all feature routes
+│ └── transcription.routes.ts → Example module routing
+├── app.ts → Express app setup (middlewares, routes)
+└── server.ts → Starts server + connects MongoDB
+Dockerfile → docker file
+docker-compose.yml → compose file
+
+## Assumptions made
+- A dummy URL is passed in the transaction POST API request body.The system mocks the file download and transcription process for demonstration purposes.
+- Azure services are mocked because actual Azure keys/credentials are not available. Both the Azure download and transcription logic use mock implementations in the service layer.
 
 ## Features
 - POST /api/transcription: Accepts audio URL, mocks download and transcription, stores result in MongoDB, returns document ID.
@@ -30,19 +47,19 @@ Benefits for 100M+ Documents
 ## Scalability & System Design
 To scale this service for 10k+ concurrent requests, a few key architectural improvements would make the system more reliable and performant:
 
-1. A Message Queue (I’ve mostly worked with Redis, and I’m familiar with Kafka as well)
+1. **A Message Queue (I’ve mostly worked with Redis, and I’m familiar with Kafka as well)**
 Instead of processing transcription inside the API request pushes a job to a queue (e.g. Redis, Kafka, RabbitMQ, BullMQ + Redis). Background workers handle the transcription processing asynchronously. This prevents API blocking and keeps latency low even under heavy load.
 
-2. Horizontal Scaling With Containers (I already Dockerized this application)
+2. **Horizontal Scaling With Containers (I already Dockerized this application)**
 Run the service in Docker and deploy on platforms that support autoscaling (e.g. Kubernetes, AWS ECS, Azure Container Apps)
 
-3. Caching Layer for Hot Queries
+3. **Caching Layer for Hot Queries**
 Use Redis to cache Recent transcriptions (e.g., last 30 days) and Frequently accessed entries
 
-4. Optimized Database Setup
+4. **Optimized Database Setup**
 Use proper indexing (already added on createdAt and _id) and Enable sharding for extremely large datasets.
 
-5. Rate limiting
+5. **Rate limiting**
 Rate limiting (e.g., express-rate-limit) to protect the service from spikes or abuse. In addition maintain proper firewall configurations to avoid DDOS style attacks.
 
 ## Prerequisites (only one thing)
