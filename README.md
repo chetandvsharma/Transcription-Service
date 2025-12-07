@@ -4,6 +4,7 @@ A production-ready Node.js + TypeScript + MongoDB backend following a clean MVC 
 
 ## Code Structure
 
+```bash
 src/
 ├── controllers/ → Handle incoming requests & call services
 ├── models/ → Mongoose schemas and data models
@@ -16,6 +17,8 @@ src/
 └── server.ts → Starts server + connects MongoDB
 Dockerfile → docker file
 docker-compose.yml → compose file
+
+   ```
 
 ## Assumptions made
 - A dummy URL is passed in the transaction POST API request body.The system mocks the file download and transcription process for demonstration purposes.
