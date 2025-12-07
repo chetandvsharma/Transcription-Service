@@ -3,7 +3,9 @@ import http from "http";
 import connectDB from "./config/mongodb.js";
 import app from "./app.js";
 
-// ===== Validate ENV Variables =====
+// ********************************************************************* //
+// Validate ENV Variables
+// ********************************************************************* //
 const requiredEnv = ["MONGO_URI", "PORT"];
 for (const key of requiredEnv) {
   if (!process.env[key]) {
@@ -12,10 +14,11 @@ for (const key of requiredEnv) {
 }
 
 const PORT = Number(process.env.PORT) || 8081;
-
 let server: http.Server;
 
-// ===== Graceful Shutdown =====
+// ********************************************************************* //
+// Graceful Shutdown 
+// ********************************************************************* //
 const gracefulShutdown = () => {
   console.log("Gracefully shutting down...");
 
@@ -47,7 +50,9 @@ process.on("uncaughtException", (err) => {
   gracefulShutdown();
 });
 
-// ===== Start Server =====
+// ********************************************************************* //
+// Start Server
+// ********************************************************************* //
 async function startServer() {
   try {
     await connectDB();

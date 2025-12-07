@@ -16,7 +16,7 @@ FROM node:22-alpine AS production
 
 WORKDIR /app
 
-# Run as non-root user (security best practice)
+# Run as non-root user
 RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
 USER appuser
 

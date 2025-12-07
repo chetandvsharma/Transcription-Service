@@ -1,14 +1,10 @@
-import { Schema, model, Document } from 'mongoose';
+import { Schema, model } from 'mongoose';
+import { TranscriptionSchema } from '../types/models.js';
 
-export interface ITranscription extends Document {
-  audioUrl: string;
-  transcription: string;
-  createdAt: Date;
-}
-
-const transcriptionSchema = new Schema<ITranscription>({
+const transcriptionSchema = new Schema<TranscriptionSchema>({
   audioUrl: { type: String, required: true },
   transcription: { type: String, required: true },
+  source: { type: String, default: "createTranscription api" },
 },{
   timestamps: true,
 });
@@ -16,4 +12,4 @@ const transcriptionSchema = new Schema<ITranscription>({
 // Index for efficient querying of recent records
 transcriptionSchema.index({ createdAt: -1, _id: -1 });
 
-export const Transcription = model<ITranscription>('Transcription', transcriptionSchema);
+export const Transcription = model<TranscriptionSchema>('Transcription', transcriptionSchema);
