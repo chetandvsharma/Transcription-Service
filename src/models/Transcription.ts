@@ -14,6 +14,6 @@ const transcriptionSchema = new Schema<ITranscription>({
 });
 
 // Index for efficient querying of recent records
-transcriptionSchema.index({ createdAt: -1 });
+transcriptionSchema.index({ createdAt: -1, _id: -1 });
 
 export const Transcription = model<ITranscription>('Transcription', transcriptionSchema);

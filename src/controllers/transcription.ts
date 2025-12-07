@@ -53,11 +53,6 @@ export default class TranscriptionController {
 
 async fetchTranscriptions(req: Request, res: Response) {
   try {
-    const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 100;
-    const skip = (page - 1) * limit;
-
-    // Calculate date 30 days ago
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
@@ -77,21 +72,14 @@ async fetchTranscriptions(req: Request, res: Response) {
           transcription: 1,
           createdAt: 1,
         },
-      },
-      { $skip: skip },
-      { $limit: limit },
+      }
     ]);
-
-    // Total count (without pagination)
-    const totalCount = await Transcription.countDocuments({
-      createdAt: { $gte: thirtyDaysAgo },
-    });
 
     res.status(200).json({
       success: true,
       info: "OK",
       data: transcriptions,
-      pagination: {page, limit, totalCount},
+      totalRecords: transcriptions?.length || 0,
     });
   } catch (error) {
     console.error("Error fetching transcriptions:", error);

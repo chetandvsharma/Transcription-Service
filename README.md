@@ -5,19 +5,52 @@ A production-ready Node.js + TypeScript + MongoDB backend, fully containerized w
 **Works on Windows, Mac, and Linux — no Node.js or MongoDB installation required!**
 
 ## Features
-- POST /api/transcription: Accepts audio URL, mocks download/transcription, stores result in MongoDB, returns document ID.
+- POST /api/transcription: Accepts audio URL, mocks download and transcription, stores result in MongoDB, returns document ID.
 - GET /api/transcriptions: Returns transcriptions from the last 30 days.
 - Mocked Azure Speech-to-Text integration in `src/services/azureSpeech.ts`.
-- Dockerized for easy setup and portability.
+- Dockerized for easy setup and sharing.
+
+## Indexing for 100M+ Records
+When working with 100M+ documents as mentioned in document, indexing becomes essential to keep queries fast and prevent MongoDB from scanning unnecessary documents and following poins : 
+
+- The query filters on createdAt >= last 30 days.
+- The query sorts on createdAt in descending order.
+- MongoDB uses _id as a secondary field to maintain stable, efficient ordering.
+
+## Used Index
+**transcriptionSchema.index({ createdAt: -1, _id: -1 });**
+
+This compound index ensures that both the filter and sort operations are performed directly using the index, avoiding collection scans or in-memory sorting.
+
+Benefits for 100M+ Documents
+- Fast range filtering on createdAt.
+- Efficient sorting on large datasets.
+- Future-proof for large-scale logs, feeds, or time-series data.
+
+## Scalability & System Design
+To scale this service for 10k+ concurrent requests, a few key architectural improvements would make the system more reliable and performant:
+
+1. A Message Queue (I’ve mostly worked with Redis, and I’m familiar with Kafka as well)
+Instead of processing transcription inside the API request pushes a job to a queue (e.g. Redis, Kafka, RabbitMQ, BullMQ + Redis). Background workers handle the transcription processing asynchronously. This prevents API blocking and keeps latency low even under heavy load.
+
+2. Horizontal Scaling With Containers (I already Dockerized this application)
+Run the service in Docker and deploy on platforms that support autoscaling (e.g. Kubernetes, AWS ECS, Azure Container Apps)
+
+3. Caching Layer for Hot Queries
+Use Redis to cache Recent transcriptions (e.g., last 30 days) and Frequently accessed entries
+
+4. Optimized Database Setup
+Use proper indexing (already added on createdAt and _id) and Enable sharding for extremely large datasets.
+
+5. Rate limiting
+Rate limiting (e.g., express-rate-limit) to protect the service from spikes or abuse. In addition maintain proper firewall configurations to avoid DDOS style attacks.
 
 ## Prerequisites (only one thing)
 
-Install **Docker Desktop** (free):
+Install **Docker Desktop** :
 
 - Windows & Mac → https://www.docker.com/products/docker-desktop/
 - Linux → https://docs.docker.com/engine/install/
-
-That’s it. You don’t need Node.js, MongoDB, or anything else.
 
 ## How to Run (3 commands only)
 
@@ -30,4 +63,4 @@ cd transcription-service
 docker compose up --build -d
 
 # 3. Wait 30–60 seconds, then open:
-http://localhost:8080
+http://localhost:8080 or http://your_ip_address:8080
