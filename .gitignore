@@ -2,3 +2,4 @@ node_modules/
 dist/
 .env
 command.txt
+docker-compose.override.yml

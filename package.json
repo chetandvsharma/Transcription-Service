@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Voice Owl Evaluation Task",
   "main": "dist/server.js",
+  "type": "module",
   "scripts": {
     "dev": "nodemon src/server.ts",
     "build": "tsc",
@@ -18,13 +19,15 @@
     "express": "^5.2.1",
     "helmet": "^8.1.0",
     "mongoose": "^9.0.0",
-    "morgan": "^1.10.1"
+    "morgan": "^1.10.1",
+    "multer": "^2.0.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/jest": "^30.0.0",
     "@types/morgan": "^1.9.10",
+    "@types/multer": "^2.0.0",
     "@types/node": "^24.10.1",
     "jest": "^30.2.0",
     "nodemon": "^3.1.11",

@@ -4,6 +4,12 @@ A production-ready Node.js + TypeScript + MongoDB backend, fully containerized w
 
 **Works on Windows, Mac, and Linux — no Node.js or MongoDB installation required!**
 
+## Features
+- POST /api/transcription: Accepts audio URL, mocks download/transcription, stores result in MongoDB, returns document ID.
+- GET /api/transcriptions: Returns transcriptions from the last 30 days.
+- Mocked Azure Speech-to-Text integration in `src/services/azureSpeech.ts`.
+- Dockerized for easy setup and portability.
+
 ## Prerequisites (only one thing)
 
 Install **Docker Desktop** (free):

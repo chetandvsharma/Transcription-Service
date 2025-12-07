@@ -1,7 +1,7 @@
 import "dotenv/config";
 import http from "http";
 import connectDB from "./config/mongodb.js";
-import app from "./app";
+import app from "./app.js";
 
 // ===== Validate ENV Variables =====
 const requiredEnv = ["MONGO_URI", "PORT"];
